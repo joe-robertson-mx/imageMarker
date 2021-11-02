@@ -38,7 +38,11 @@
             </property>
             <property key="data" type="datasource" isList="true" required="true">
 	            <caption>Object type</caption>
-	            <description />
+	            <description>Select the object type the image should be saved as (must be a specilisation of Image)</description>
+            </property>
+            <property key="height" type="integer" required="true" defaultValue="500">
+                <caption>Height</caption>
+                <description>The height of the canvas in px</description>
             </property>
         </propertyGroup>
         <propertyGroup caption="Colors">

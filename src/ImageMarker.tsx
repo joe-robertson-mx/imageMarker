@@ -20,7 +20,8 @@ export const ImageMarker = (props: ImageMarkerContainerProps): ReactElement => {
         highLimit,
         showGrid,
         showMarkUp,
-        data
+        data,
+        height
     } = props;
 
     return (
@@ -40,6 +41,7 @@ export const ImageMarker = (props: ImageMarkerContainerProps): ReactElement => {
                     showGrid={showGrid}
                     showMarkUp={showMarkUp}
                     data={data!}
+                    height={height}
                 />
             )}
         </div>

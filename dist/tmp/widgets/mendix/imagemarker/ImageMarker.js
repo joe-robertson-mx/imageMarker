@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "3a67ccbed108daf79488";
+/******/ 	var hotCurrentHash = "8aa83764434fb75f56a0";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1520,8 +1520,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var ImageMarker = function (props) {
-    var image = props.image, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, lowLimit = props.lowLimit, highLimit = props.highLimit, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data;
-    return (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, image.status === "available" /* Available */ && image.value && (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_components_Canvas__WEBPACK_IMPORTED_MODULE_1__["Canvas"], { imageuri: image.value.uri, columns: columns, rows: rows, pointColor: pointColor, lineColor: lineColor, lowColor: lowColor, medColor: medColor, highColor: highColor, lowLimit: lowLimit, highLimit: highLimit, showGrid: showGrid, showMarkUp: showMarkUp, data: data }))));
+    var image = props.image, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, lowLimit = props.lowLimit, highLimit = props.highLimit, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height;
+    return (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, image.status === "available" /* Available */ && image.value && (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_components_Canvas__WEBPACK_IMPORTED_MODULE_1__["Canvas"], { imageuri: image.value.uri, columns: columns, rows: rows, pointColor: pointColor, lineColor: lineColor, lowColor: lowColor, medColor: medColor, highColor: highColor, lowLimit: lowLimit, highLimit: highLimit, showGrid: showGrid, showMarkUp: showMarkUp, data: data, height: height }))));
 };
 
 
@@ -1551,25 +1551,19 @@ var Canvas = function (props) {
     var canvasRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
     var canvasCtxRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
     var imgRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-    var imageuri = props.imageuri, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data;
+    var imageuri = props.imageuri, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height;
     var _a = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])([]), points = _a[0], setPoints = _a[1];
     var _b = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(true), initialLoad = _b[0], setInitialLoad = _b[1];
     Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
         // Initialize
         var imgElement = imgRef.current;
+        canvasCtxRef.current = canvasRef.current.getContext("2d");
+        var ctx = canvasCtxRef.current;
         imgElement.onload = function () {
-            canvasCtxRef.current = canvasRef.current.getContext("2d");
-            var ctx = canvasCtxRef.current;
-            ctx.canvas.onload = function () {
-                var imgAspect = imgElement.naturalWidth / imgElement.naturalHeight;
-                imgElement.width = ctx.canvas.scrollWidth;
-                imgElement.height = imgElement.width / imgAspect;
-                if (imgElement.height > ctx.canvas.height) {
-                    imgElement.height = ctx.canvas.height;
-                    imgElement.width = imgElement.height * imgAspect;
-                }
-                drawImage(ctx, imgElement);
-            };
+            var imgAspect = imgElement.naturalWidth / imgElement.naturalHeight;
+            imgElement.height = height;
+            imgElement.width = imgElement.height * imgAspect;
+            redraw(ctx, imgElement);
         };
     }, [initialLoad]);
     Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
@@ -1579,7 +1573,7 @@ var Canvas = function (props) {
             var ctx = canvasCtxRef.current;
             var imgElement = imgRef.current;
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-            drawImage(ctx, imgElement);
+            redraw(ctx, imgElement);
         }
     }, [points]);
     var redraw = function (ctx, imgElement) {
@@ -1598,14 +1592,15 @@ var Canvas = function (props) {
             setInitialLoad(false);
         }
     };
-    var drawImage = function (ctx, imgElement) {
-        ctx.canvas.width = imgElement.width;
-        ctx.canvas.height = imgElement.height;
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.drawImage(imgElement, 0, 0, ctx.canvas.width, ctx.canvas.height);
-        drawPoints(ctx);
-        redraw(ctx, imgElement);
-    };
+    // const drawImage = (ctx: CanvasRenderingContext2D, imgElement: HTMLImageElement): void => {
+    //     console.log("Draw");
+    //     ctx.canvas.width = 500;
+    //     ctx.canvas.height = 500;
+    //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    //     ctx.drawImage(imgElement, 0, 0, 500, 500);
+    //     drawPoints(ctx);
+    //     redraw(ctx, imgElement);
+    // };
     var addPointClick = function (event) {
         event.preventDefault();
         if (canvasRef.current) {
@@ -1669,7 +1664,6 @@ var Canvas = function (props) {
         var errorMatrix = new Array(columns);
         for (var i = 0; i < columns; i++) {
             errorMatrix[i] = new Array(rows);
-            console.trace(errorMatrix[i].length);
             for (var j = 0; j < rows; j++) {
                 errorMatrix[i][j] = 0;
             }

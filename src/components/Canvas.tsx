@@ -15,6 +15,7 @@ export interface CanvasProps {
     showGrid: boolean;
     showMarkUp: boolean;
     data: ListValue;
+    height: number;
 }
 
 interface Point {
@@ -40,7 +41,8 @@ export const Canvas = (props: CanvasProps): ReactElement => {
         highColor,
         showGrid,
         showMarkUp,
-        data
+        data,
+        height
     } = props;
 
     const [points, setPoints] = useState<Point[]>([]);
@@ -49,19 +51,13 @@ export const Canvas = (props: CanvasProps): ReactElement => {
     useEffect(() => {
         // Initialize
         const imgElement = imgRef.current!;
+        canvasCtxRef.current = canvasRef.current!.getContext("2d");
+        const ctx = canvasCtxRef.current!;
         imgElement.onload = () => {
-            canvasCtxRef.current = canvasRef.current!.getContext("2d");
-            const ctx = canvasCtxRef.current!;
-            ctx.canvas.onload = () => {
-                const imgAspect = imgElement.naturalWidth / imgElement.naturalHeight;
-                imgElement.width = ctx.canvas.scrollWidth;
-                imgElement.height = imgElement.width / imgAspect;
-                if (imgElement.height > ctx.canvas.height) {
-                    imgElement.height = ctx.canvas.height;
-                    imgElement.width = imgElement.height * imgAspect;
-                }
-                drawImage(ctx, imgElement);
-            };
+            const imgAspect = imgElement.naturalWidth / imgElement.naturalHeight;
+            imgElement.height = height;
+            imgElement.width = imgElement.height * imgAspect;
+            redraw(ctx, imgElement);
         };
     }, [initialLoad]);
 
@@ -72,7 +68,7 @@ export const Canvas = (props: CanvasProps): ReactElement => {
             const ctx = canvasCtxRef.current!;
             const imgElement = imgRef.current!;
             ctx!.clearRect(0, 0, ctx!.canvas.width, ctx!.canvas.height);
-            drawImage(ctx, imgElement);
+            redraw(ctx, imgElement);
         }
     }, [points]);
 
@@ -93,15 +89,16 @@ export const Canvas = (props: CanvasProps): ReactElement => {
         }
     };
 
-    const drawImage = (ctx: CanvasRenderingContext2D, imgElement: HTMLImageElement): void => {
-        ctx.canvas.width = imgElement.width;
-        ctx.canvas.height = imgElement.height;
-        ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-        ctx.drawImage(imgElement, 0, 0, ctx.canvas.width, ctx.canvas.height);
-        drawPoints(ctx);
+    // const drawImage = (ctx: CanvasRenderingContext2D, imgElement: HTMLImageElement): void => {
+    //     console.log("Draw");
+    //     ctx.canvas.width = 500;
+    //     ctx.canvas.height = 500;
+    //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    //     ctx.drawImage(imgElement, 0, 0, 500, 500);
+    //     drawPoints(ctx);
 
-        redraw(ctx, imgElement);
-    };
+    //     redraw(ctx, imgElement);
+    // };
 
     const addPointClick = (event: MouseEvent<HTMLCanvasElement>): void => {
         event.preventDefault();
@@ -179,7 +176,6 @@ export const Canvas = (props: CanvasProps): ReactElement => {
         const errorMatrix = new Array(columns);
         for (let i = 0; i < columns; i++) {
             errorMatrix[i] = new Array(rows);
-            console.trace(errorMatrix[i].length);
             for (let j = 0; j < rows; j++) {
                 errorMatrix[i][j] = 0;
             }
