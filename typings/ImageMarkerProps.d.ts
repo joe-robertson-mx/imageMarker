@@ -19,6 +19,7 @@ export interface ImageMarkerContainerProps {
     lowLimit: number;
     highLimit: number;
     data: ListValue;
+    height: number;
     pointColor: string;
     lineColor: string;
     lowColor: string;
@@ -37,6 +38,7 @@ export interface ImageMarkerPreviewProps {
     lowLimit: number | null;
     highLimit: number | null;
     data: {} | null;
+    height: number | null;
     pointColor: string;
     lineColor: string;
     lowColor: string;
