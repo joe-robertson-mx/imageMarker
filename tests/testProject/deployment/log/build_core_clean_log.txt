@@ -1,0 +1,7 @@
+Buildfile: C:\Users\Joe.Robertson\Documents\Widgets\imageMarker\tests\testProject\deployment\build_core.xml
+
+clean:
+
+BUILD SUCCESSFUL
+Total time: 0 seconds
+

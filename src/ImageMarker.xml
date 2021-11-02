@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="mendix.imagemarker.ImageMarker" pluginWidget="true" needsEntityContext="true" offlineCapable="true"
+        supportedPlatform="Web"
+        xmlns="http://www.mendix.com/widget/1.0/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.mendix.com/widget/1.0/ ../node_modules/mendix/custom_widget.xsd">
+    <name>Image Marker</name>
+    <description>A widget to be able to mark images</description>
+    <icon/>
+    <properties>
+        <propertyGroup caption="General">
+            <property key="image" type="image" required="true">
+                <caption>Image for markup</caption>
+                <description>The Image to be marked up.</description>
+            </property>
+            <property key="columns" type="integer" required="true" defaultValue="3">
+                <caption>Columns</caption>
+                <description>Columns required</description>
+            </property>
+            <property key="rows" type="integer" required="true" defaultValue="3">
+                <caption>Rows</caption>
+                <description>Rows required</description>
+            </property>
+            <property key="showGrid" type="boolean" required="true" defaultValue="false">
+                <caption>Show Grid</caption>
+                <description>Show the grid lines</description>
+            </property>
+            <property key="showMarkUp" type="boolean" required="true" defaultValue="false">
+                <caption>Show Color Markup</caption>
+                <description>Show color coded areas</description>
+            </property>
+            <property key="lowLimit" type="integer" required="true" defaultValue="1">
+                <caption>Low Limit</caption>
+                <description>Lower limit for lowest color</description>
+            </property>
+            <property key="highLimit" type="integer" required="true" defaultValue="3">
+                <caption>Upper Limit</caption>
+                <description>Upper limit for highest color</description>
+            </property>
+            <property key="data" type="datasource" isList="true" required="true">
+	            <caption>Object type</caption>
+	            <description />
+            </property>
+        </propertyGroup>
+        <propertyGroup caption="Colors">
+            <property key="pointColor" type="string" required="true">
+                <caption>Points Color</caption>
+                <description>CSS style color description</description>
+            </property>
+            <property key="lineColor" type="string" required="false">
+                <caption>Line Color</caption>
+                <description>CSS style color description</description>
+            </property>
+            <property key="lowColor" type="string" required="false">
+                <caption>OK Color</caption>
+                <description>CSS style color description</description>
+            </property>
+            <property key="medColor" type="string" required="false">
+                <caption>Minor Issue Color</caption>
+                <description>CSS style color description</description>
+            </property>
+            <property key="highColor" type="string" required="false">
+                <caption>Significant Issue Color</caption>
+                <description>CSS style color description</description>
+            </property>
+        </propertyGroup>
+    </properties>
+</widget>

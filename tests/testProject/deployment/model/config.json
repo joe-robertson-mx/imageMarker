@@ -1,0 +1,17 @@
+{
+  "Configuration": {
+    "DatabaseName": "default",
+    "DatabasePassword": "",
+    "DatabaseType": "HSQLDB",
+    "DatabaseHost": "",
+    "DatabaseUserName": "",
+    "DatabaseUseIntegratedSecurity": "False",
+    "ApplicationRootUrl": "http://localhost:8080/",
+    "ScheduledEventExecution": "None"
+  },
+  "Constants": {
+    "Atlas_Core.Atlas_Core_Version": "3.0.6",
+    "Atlas_Web_Content.Atlas_Web_Content_Version": "3.0.5"
+  },
+  "AdminPassword": null
+}
