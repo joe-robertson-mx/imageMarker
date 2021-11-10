@@ -13,6 +13,6 @@ Download the widget from the Marketplace and add to a page within your Mendix pr
 - Object type - The Mendix object that the markup will be committed to on 'Save'
 - Height - Set Mendix canvas height
 
-###Colors
+### Colors
 - Set the Colors for points, lines and markups using CSS style color description
 Note: It is recommended to set the 'OK Color', 'Minor Issue Color' and 'Significant Issue Color' to be somewhat transparent (e.g. rgba(240, 52, 52, .4))
