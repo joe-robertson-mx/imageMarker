@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "8aa83764434fb75f56a0";
+/******/ 	var hotCurrentHash = "77b6549b6f34cba09574";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1520,8 +1520,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var ImageMarker = function (props) {
-    var image = props.image, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, lowLimit = props.lowLimit, highLimit = props.highLimit, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height;
-    return (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, image.status === "available" /* Available */ && image.value && (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_components_Canvas__WEBPACK_IMPORTED_MODULE_1__["Canvas"], { imageuri: image.value.uri, columns: columns, rows: rows, pointColor: pointColor, lineColor: lineColor, lowColor: lowColor, medColor: medColor, highColor: highColor, lowLimit: lowLimit, highLimit: highLimit, showGrid: showGrid, showMarkUp: showMarkUp, data: data, height: height }))));
+    var image = props.image, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, lowLimit = props.lowLimit, highLimit = props.highLimit, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height, context = props.context;
+    return (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, image.status === "available" /* Available */ && image.value && (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_components_Canvas__WEBPACK_IMPORTED_MODULE_1__["Canvas"], { imageuri: image.value.uri, columns: columns, rows: rows, pointColor: pointColor, lineColor: lineColor, lowColor: lowColor, medColor: medColor, highColor: highColor, lowLimit: lowLimit, highLimit: highLimit, showGrid: showGrid, showMarkUp: showMarkUp, data: data, height: height, context: context }))));
 };
 
 
@@ -1551,7 +1551,7 @@ var Canvas = function (props) {
     var canvasRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
     var canvasCtxRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
     var imgRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-    var imageuri = props.imageuri, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height;
+    var imageuri = props.imageuri, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height, context = props.context;
     var _a = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])([]), points = _a[0], setPoints = _a[1];
     var _b = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(true), initialLoad = _b[0], setInitialLoad = _b[1];
     Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
@@ -1592,15 +1592,6 @@ var Canvas = function (props) {
             setInitialLoad(false);
         }
     };
-    // const drawImage = (ctx: CanvasRenderingContext2D, imgElement: HTMLImageElement): void => {
-    //     console.log("Draw");
-    //     ctx.canvas.width = 500;
-    //     ctx.canvas.height = 500;
-    //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    //     ctx.drawImage(imgElement, 0, 0, 500, 500);
-    //     drawPoints(ctx);
-    //     redraw(ctx, imgElement);
-    // };
     var addPointClick = function (event) {
         event.preventDefault();
         if (canvasRef.current) {
@@ -1704,10 +1695,38 @@ var Canvas = function (props) {
                     mx.data.create({
                         entity: entityName,
                         callback: function (mxObject) {
-                            mxObject.set("Name", "Test " + Math.random);
                             ctx.canvas.toBlob(function (blob) {
-                                mx.data.saveDocument(mxObject.getGuid(), "Test " + Math.random, {}, blob, function () {
-                                    console.log("Saved");
+                                mx.data.saveDocument(mxObject.getGuid(), entityName + "_" + Date.now(), {}, blob, function () {
+                                    if (context === null || context === void 0 ? void 0 : context.items) {
+                                        mx.data.get({
+                                            guids: [context.items[0].id],
+                                            callback: function (objs) {
+                                                var obj = objs[0];
+                                                var entityName = obj.getEntity();
+                                                var n = entityName.lastIndexOf(".");
+                                                var entityNameTrimmed = entityName.substring(n + 1);
+                                                var refArr = mxObject.getReferenceAttributes();
+                                                var ref = refArr.find(function (str) {
+                                                    return str.includes(entityNameTrimmed);
+                                                });
+                                                if (ref) {
+                                                    mxObject.addReference(ref, obj.getGuid());
+                                                    mx.data.commit({
+                                                        mxobj: mxObject,
+                                                        callback: function () {
+                                                            console.log("Committed ref");
+                                                        },
+                                                        error: function (e) {
+                                                            console.log("Error occurred attempting to commit: " + e);
+                                                        }
+                                                    });
+                                                }
+                                            },
+                                            error: function (e) {
+                                                console.log(e);
+                                            }
+                                        });
+                                    }
                                 }, function (e) {
                                     console.log(e);
                                 });

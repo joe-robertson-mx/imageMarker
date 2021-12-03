@@ -38,12 +38,17 @@
             </property>
             <property key="data" type="datasource" isList="true" required="true">
 	            <caption>Object type</caption>
-	            <description>Select the object type the image should be saved as (must be a specilisation of Image)</description>
+	            <description>Select the object type the image should be saved as (must be a specialisation of Image)</description>
             </property>
             <property key="height" type="integer" required="true" defaultValue="500">
                 <caption>Height</caption>
                 <description>The height of the canvas in px</description>
             </property>
+            <property key="context" type="datasource" isList="true" required="false">
+                <caption>Context</caption>
+                <description>Provide a parent entity to link the image created to. Please note that the association between the parent and child must contain the name of the parent entity </description>
+            </property>
+
         </propertyGroup>
         <propertyGroup caption="Colors">
             <property key="pointColor" type="string" required="true">

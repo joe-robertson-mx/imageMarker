@@ -22,7 +22,8 @@ public class Image extends system.proxies.Image
 		DeleteAfterDownload("DeleteAfterDownload"),
 		Contents("Contents"),
 		HasContents("HasContents"),
-		Size("Size");
+		Size("Size"),
+		Image_ContextEntity("MyFirstModule.Image_ContextEntity");
 
 		private java.lang.String metaName;
 
@@ -80,6 +81,49 @@ public class Image extends system.proxies.Image
 		for (com.mendix.systemwideinterfaces.core.IMendixObject obj : com.mendix.core.Core.retrieveXPathQuery(context, "//MyFirstModule.Image" + xpathConstraint))
 			result.add(myfirstmodule.proxies.Image.initialize(context, obj));
 		return result;
+	}
+
+	/**
+	 * @return value of Image_ContextEntity
+	 */
+	public final myfirstmodule.proxies.ContextEntity getImage_ContextEntity() throws com.mendix.core.CoreException
+	{
+		return getImage_ContextEntity(getContext());
+	}
+
+	/**
+	 * @param context
+	 * @return value of Image_ContextEntity
+	 */
+	public final myfirstmodule.proxies.ContextEntity getImage_ContextEntity(com.mendix.systemwideinterfaces.core.IContext context) throws com.mendix.core.CoreException
+	{
+		myfirstmodule.proxies.ContextEntity result = null;
+		com.mendix.systemwideinterfaces.core.IMendixIdentifier identifier = getMendixObject().getValue(context, MemberNames.Image_ContextEntity.toString());
+		if (identifier != null)
+			result = myfirstmodule.proxies.ContextEntity.load(context, identifier);
+		return result;
+	}
+
+	/**
+	 * Set value of Image_ContextEntity
+	 * @param image_contextentity
+	 */
+	public final void setImage_ContextEntity(myfirstmodule.proxies.ContextEntity image_contextentity)
+	{
+		setImage_ContextEntity(getContext(), image_contextentity);
+	}
+
+	/**
+	 * Set value of Image_ContextEntity
+	 * @param context
+	 * @param image_contextentity
+	 */
+	public final void setImage_ContextEntity(com.mendix.systemwideinterfaces.core.IContext context, myfirstmodule.proxies.ContextEntity image_contextentity)
+	{
+		if (image_contextentity == null)
+			getMendixObject().setValue(context, MemberNames.Image_ContextEntity.toString(), null);
+		else
+			getMendixObject().setValue(context, MemberNames.Image_ContextEntity.toString(), image_contextentity.getMendixObject().getId());
 	}
 
 	@java.lang.Override

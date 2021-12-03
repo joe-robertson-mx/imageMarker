@@ -21,7 +21,8 @@ export const ImageMarker = (props: ImageMarkerContainerProps): ReactElement => {
         showGrid,
         showMarkUp,
         data,
-        height
+        height,
+        context
     } = props;
 
     return (
@@ -42,6 +43,7 @@ export const ImageMarker = (props: ImageMarkerContainerProps): ReactElement => {
                     showMarkUp={showMarkUp}
                     data={data!}
                     height={height}
+                    context={context}
                 />
             )}
         </div>

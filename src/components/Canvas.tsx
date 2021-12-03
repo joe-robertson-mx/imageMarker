@@ -16,6 +16,7 @@ export interface CanvasProps {
     showMarkUp: boolean;
     data: ListValue;
     height: number;
+    context: ListValue | undefined;
 }
 
 interface Point {
@@ -42,7 +43,8 @@ export const Canvas = (props: CanvasProps): ReactElement => {
         showGrid,
         showMarkUp,
         data,
-        height
+        height,
+        context
     } = props;
 
     const [points, setPoints] = useState<Point[]>([]);
@@ -88,17 +90,6 @@ export const Canvas = (props: CanvasProps): ReactElement => {
             setInitialLoad(false);
         }
     };
-
-    // const drawImage = (ctx: CanvasRenderingContext2D, imgElement: HTMLImageElement): void => {
-    //     console.log("Draw");
-    //     ctx.canvas.width = 500;
-    //     ctx.canvas.height = 500;
-    //     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    //     ctx.drawImage(imgElement, 0, 0, 500, 500);
-    //     drawPoints(ctx);
-
-    //     redraw(ctx, imgElement);
-    // };
 
     const addPointClick = (event: MouseEvent<HTMLCanvasElement>): void => {
         event.preventDefault();
@@ -218,15 +209,45 @@ export const Canvas = (props: CanvasProps): ReactElement => {
                     mx.data.create({
                         entity: entityName,
                         callback: mxObject => {
-                            mxObject.set("Name", `Test ${Math.random}`);
                             ctx.canvas.toBlob(blob => {
                                 mx.data.saveDocument(
                                     mxObject.getGuid(),
-                                    `Test ${Math.random}`,
+                                    `${entityName}_${Date.now()}`,
                                     {},
                                     blob!,
                                     () => {
-                                        console.log("Saved");
+                                        if (context?.items) {
+                                            mx.data.get({
+                                                guids: [context.items[0].id],
+                                                callback(objs) {
+                                                    const obj = objs[0];
+                                                    const entityName = obj.getEntity();
+                                                    const n = entityName.lastIndexOf(".");
+                                                    const entityNameTrimmed = entityName.substring(n + 1);
+                                                    const refArr = mxObject.getReferenceAttributes();
+                                                    const ref = refArr.find(str => {
+                                                        return str.includes(entityNameTrimmed);
+                                                    });
+                                                    if (ref) {
+                                                        mxObject.addReference(ref, obj.getGuid());
+                                                        mx.data.commit({
+                                                            mxobj: mxObject,
+                                                            callback: () => {
+                                                                console.log("Committed ref");
+                                                            },
+                                                            error: e => {
+                                                                console.log(
+                                                                    "Error occurred attempting to commit: " + e
+                                                                );
+                                                            }
+                                                        });
+                                                    }
+                                                },
+                                                error: e => {
+                                                    console.log(e);
+                                                }
+                                            });
+                                        }
                                     },
                                     e => {
                                         console.log(e);
