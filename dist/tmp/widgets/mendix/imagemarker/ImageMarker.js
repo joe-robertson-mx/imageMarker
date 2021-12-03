@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "77b6549b6f34cba09574";
+/******/ 	var hotCurrentHash = "ab4526f3110d2f4b118c";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1713,9 +1713,7 @@ var Canvas = function (props) {
                                                     mxObject.addReference(ref, obj.getGuid());
                                                     mx.data.commit({
                                                         mxobj: mxObject,
-                                                        callback: function () {
-                                                            console.log("Committed ref");
-                                                        },
+                                                        callback: function () { },
                                                         error: function (e) {
                                                             console.log("Error occurred attempting to commit: " + e);
                                                         }
