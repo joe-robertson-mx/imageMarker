@@ -23,7 +23,8 @@ Download from the marketplace and place on a page within Studio Pro.
 
  ## Configuration
 To use a Dynamic image, place the widget within a data view containing the image.
-Set the following properties on the widget:
+Set the following:
+### Properties:
     • Image for markup - Set a dynamic or static image source to mark up
     • Columns, Rows and Show Grid Lines - Set whether you want to display the Grid on top of the image
     • Color markup - Show color coded grids to indicate marks
