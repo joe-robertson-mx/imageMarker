@@ -232,9 +232,7 @@ export const Canvas = (props: CanvasProps): ReactElement => {
                                                         mxObject.addReference(ref, obj.getGuid());
                                                         mx.data.commit({
                                                             mxobj: mxObject,
-                                                            callback: () => {
-                                                                console.log("Committed ref");
-                                                            },
+                                                            callback: () => {},
                                                             error: e => {
                                                                 console.log(
                                                                     "Error occurred attempting to commit: " + e
