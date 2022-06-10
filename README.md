@@ -32,4 +32,5 @@ Set the following properties on the widget:
     • Object type - The Mendix object that the markup will be committed to on 'Save'
     • Height - Set Mendix canvas height
     • Context - Provide a parent entity to link the image created to. Please note that the association between the parent and child must contain the name of the parent entity
+	• point - Provide an entity that is created for each point. Please note it must have decimal attributes named X and Y, and a single association to the Image entity named: [PointEntityName]_[ImageEntityName] 
 
