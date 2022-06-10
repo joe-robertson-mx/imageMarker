@@ -73,7 +73,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "ab4526f3110d2f4b118c";
+/******/ 	var hotCurrentHash = "6d2543b724679f146a11";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -1520,8 +1520,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 var ImageMarker = function (props) {
-    var image = props.image, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, lowLimit = props.lowLimit, highLimit = props.highLimit, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height, context = props.context;
-    return (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, image.status === "available" /* Available */ && image.value && (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_components_Canvas__WEBPACK_IMPORTED_MODULE_1__["Canvas"], { imageuri: image.value.uri, columns: columns, rows: rows, pointColor: pointColor, lineColor: lineColor, lowColor: lowColor, medColor: medColor, highColor: highColor, lowLimit: lowLimit, highLimit: highLimit, showGrid: showGrid, showMarkUp: showMarkUp, data: data, height: height, context: context }))));
+    var image = props.image, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, lowLimit = props.lowLimit, highLimit = props.highLimit, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height, context = props.context, point = props.point;
+    return (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])("div", null, image.status === "available" /* Available */ && image.value && (Object(react__WEBPACK_IMPORTED_MODULE_0__["createElement"])(_components_Canvas__WEBPACK_IMPORTED_MODULE_1__["Canvas"], { imageuri: image.value.uri, columns: columns, rows: rows, pointColor: pointColor, lineColor: lineColor, lowColor: lowColor, medColor: medColor, highColor: highColor, lowLimit: lowLimit, highLimit: highLimit, showGrid: showGrid, showMarkUp: showMarkUp, data: data, point: point, height: height, context: context }))));
 };
 
 
@@ -1546,12 +1546,13 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
+/* eslint-disable @typescript-eslint/no-empty-function */
 
 var Canvas = function (props) {
     var canvasRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
     var canvasCtxRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
     var imgRef = Object(react__WEBPACK_IMPORTED_MODULE_0__["useRef"])(null);
-    var imageuri = props.imageuri, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height, context = props.context;
+    var imageuri = props.imageuri, columns = props.columns, rows = props.rows, pointColor = props.pointColor, lineColor = props.lineColor, lowColor = props.lowColor, medColor = props.medColor, highColor = props.highColor, showGrid = props.showGrid, showMarkUp = props.showMarkUp, data = props.data, height = props.height, point = props.point, context = props.context;
     var _a = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])([]), points = _a[0], setPoints = _a[1];
     var _b = Object(react__WEBPACK_IMPORTED_MODULE_0__["useState"])(true), initialLoad = _b[0], setInitialLoad = _b[1];
     Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
@@ -1660,6 +1661,7 @@ var Canvas = function (props) {
             }
         }
         // map the points to the matrix
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (var p = 0; p < points.length; p++) {
             errorMatrix[points[p].boxX][points[p].boxY] += 1;
         }
@@ -1684,6 +1686,28 @@ var Canvas = function (props) {
     var clearPoints = function () {
         setPoints([]);
     };
+    var addReference = function (child, parent, commit) {
+        // const entityNameTrimmed = child.getEntity().substring(child.getEntity().lastIndexOf(".") + 1);
+        var parentEntityNameTrimmed = parent.getEntity().substring(child.getEntity().lastIndexOf(".") + 1);
+        var refArr = child.getReferenceAttributes();
+        var ref = refArr.find(function (str) {
+            return str.includes(parentEntityNameTrimmed);
+        });
+        if (ref) {
+            child.addReference(ref, parent.getGuid());
+            if (commit) {
+                mx.data.commit({
+                    mxobj: child,
+                    callback: function () {
+                        console.log("Commited", child.getGuid(), child.getReference(ref));
+                    },
+                    error: function (e) {
+                        console.log("Error occurred attempting to commit: " + e);
+                    }
+                });
+            }
+        }
+    };
     var saveImage = function () {
         var ctx = canvasCtxRef.current;
         if (data.items) {
@@ -1694,31 +1718,28 @@ var Canvas = function (props) {
                     var entityName = obj.getEntity();
                     mx.data.create({
                         entity: entityName,
-                        callback: function (mxObject) {
+                        callback: function (imgObj) {
                             ctx.canvas.toBlob(function (blob) {
-                                mx.data.saveDocument(mxObject.getGuid(), entityName + "_" + Date.now(), {}, blob, function () {
-                                    if (context === null || context === void 0 ? void 0 : context.items) {
+                                mx.data.saveDocument(imgObj.getGuid(), entityName + "_" + Date.now(), {}, blob, function () {
+                                    if (point === null || point === void 0 ? void 0 : point.items) {
                                         mx.data.get({
-                                            guids: [context.items[0].id],
+                                            guids: [point.items[0].id],
                                             callback: function (objs) {
-                                                var obj = objs[0];
-                                                var entityName = obj.getEntity();
-                                                var n = entityName.lastIndexOf(".");
-                                                var entityNameTrimmed = entityName.substring(n + 1);
-                                                var refArr = mxObject.getReferenceAttributes();
-                                                var ref = refArr.find(function (str) {
-                                                    return str.includes(entityNameTrimmed);
-                                                });
-                                                if (ref) {
-                                                    mxObject.addReference(ref, obj.getGuid());
-                                                    mx.data.commit({
-                                                        mxobj: mxObject,
-                                                        callback: function () { },
+                                                var pointGen = objs[0];
+                                                var entityName = pointGen.getEntity();
+                                                points.forEach(function (p) {
+                                                    mx.data.create({
+                                                        entity: entityName,
+                                                        callback: function (pointObj) {
+                                                            pointObj.set("X", p.x.toFixed(2));
+                                                            pointObj.set("Y", p.y.toFixed(2));
+                                                            addReference(pointObj, imgObj, true);
+                                                        },
                                                         error: function (e) {
-                                                            console.log("Error occurred attempting to commit: " + e);
+                                                            console.log(e, entityName);
                                                         }
                                                     });
-                                                }
+                                                });
                                             },
                                             error: function (e) {
                                                 console.log(e);
@@ -1729,6 +1750,25 @@ var Canvas = function (props) {
                                     console.log(e);
                                 });
                             });
+                            if (context === null || context === void 0 ? void 0 : context.items) {
+                                mx.data.get({
+                                    guids: [context.items[0].id],
+                                    callback: function (objs) {
+                                        var contextObj = objs[0];
+                                        addReference(imgObj, contextObj, false);
+                                        mx.data.commit({
+                                            mxobj: contextObj,
+                                            callback: function () { },
+                                            error: function (e) {
+                                                console.log("Error occurred attempting to commit: " + e);
+                                            }
+                                        });
+                                    },
+                                    error: function (e) {
+                                        console.log(e, entityName);
+                                    }
+                                });
+                            }
                         },
                         error: function (e) {
                             console.log(e);

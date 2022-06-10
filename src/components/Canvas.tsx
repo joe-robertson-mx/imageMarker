@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { ReactElement, createElement, useRef, useEffect, useState, MouseEvent } from "react";
 import { ListValue } from "mendix";
 
@@ -17,6 +18,7 @@ export interface CanvasProps {
     data: ListValue;
     height: number;
     context: ListValue | undefined;
+    point: ListValue | undefined;
 }
 
 interface Point {
@@ -44,6 +46,7 @@ export const Canvas = (props: CanvasProps): ReactElement => {
         showMarkUp,
         data,
         height,
+        point,
         context
     } = props;
 
@@ -173,6 +176,7 @@ export const Canvas = (props: CanvasProps): ReactElement => {
         }
 
         // map the points to the matrix
+        // eslint-disable-next-line @typescript-eslint/prefer-for-of
         for (let p = 0; p < points.length; p++) {
             errorMatrix[points[p].boxX][points[p].boxY] += 1;
         }
@@ -198,6 +202,29 @@ export const Canvas = (props: CanvasProps): ReactElement => {
         setPoints([]);
     };
 
+    const addReference = (child: mendix.lib.MxObject, parent: mendix.lib.MxObject, commit: boolean): void => {
+        // const entityNameTrimmed = child.getEntity().substring(child.getEntity().lastIndexOf(".") + 1);
+        const parentEntityNameTrimmed = parent.getEntity().substring(child.getEntity().lastIndexOf(".") + 1);
+        const refArr = child.getReferenceAttributes();
+        const ref = refArr.find(str => {
+            return str.includes(parentEntityNameTrimmed);
+        });
+        if (ref) {
+            child.addReference(ref, parent.getGuid());
+            if (commit) {
+                mx.data.commit({
+                    mxobj: child,
+                    callback: () => {
+                        console.log("Commited", child.getGuid(), child.getReference(ref));
+                    },
+                    error: e => {
+                        console.log("Error occurred attempting to commit: " + e);
+                    }
+                });
+            }
+        }
+    };
+
     const saveImage = (): void => {
         const ctx = canvasCtxRef.current!;
         if (data.items) {
@@ -208,38 +235,33 @@ export const Canvas = (props: CanvasProps): ReactElement => {
                     const entityName = obj.getEntity();
                     mx.data.create({
                         entity: entityName,
-                        callback: mxObject => {
+                        callback: imgObj => {
                             ctx.canvas.toBlob(blob => {
                                 mx.data.saveDocument(
-                                    mxObject.getGuid(),
+                                    imgObj.getGuid(),
                                     `${entityName}_${Date.now()}`,
                                     {},
                                     blob!,
                                     () => {
-                                        if (context?.items) {
+                                        if (point?.items) {
                                             mx.data.get({
-                                                guids: [context.items[0].id],
+                                                guids: [point.items[0].id],
                                                 callback(objs) {
-                                                    const obj = objs[0];
-                                                    const entityName = obj.getEntity();
-                                                    const n = entityName.lastIndexOf(".");
-                                                    const entityNameTrimmed = entityName.substring(n + 1);
-                                                    const refArr = mxObject.getReferenceAttributes();
-                                                    const ref = refArr.find(str => {
-                                                        return str.includes(entityNameTrimmed);
-                                                    });
-                                                    if (ref) {
-                                                        mxObject.addReference(ref, obj.getGuid());
-                                                        mx.data.commit({
-                                                            mxobj: mxObject,
-                                                            callback: () => {},
+                                                    const pointGen = objs[0];
+                                                    const entityName = pointGen.getEntity();
+                                                    points.forEach(p => {
+                                                        mx.data.create({
+                                                            entity: entityName,
+                                                            callback: pointObj => {
+                                                                pointObj.set("X", p.x.toFixed(2));
+                                                                pointObj.set("Y", p.y.toFixed(2));
+                                                                addReference(pointObj, imgObj, true);
+                                                            },
                                                             error: e => {
-                                                                console.log(
-                                                                    "Error occurred attempting to commit: " + e
-                                                                );
+                                                                console.log(e, entityName);
                                                             }
                                                         });
-                                                    }
+                                                    });
                                                 },
                                                 error: e => {
                                                     console.log(e);
@@ -252,6 +274,25 @@ export const Canvas = (props: CanvasProps): ReactElement => {
                                     }
                                 );
                             });
+                            if (context?.items) {
+                                mx.data.get({
+                                    guids: [context.items[0].id],
+                                    callback(objs) {
+                                        const contextObj = objs[0];
+                                        addReference(imgObj, contextObj, false);
+                                        mx.data.commit({
+                                            mxobj: contextObj,
+                                            callback: () => {},
+                                            error: e => {
+                                                console.log("Error occurred attempting to commit: " + e);
+                                            }
+                                        });
+                                    },
+                                    error: e => {
+                                        console.log(e, entityName);
+                                    }
+                                });
+                            }
                         },
                         error: e => {
                             console.log(e);

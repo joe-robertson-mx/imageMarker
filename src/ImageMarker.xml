@@ -40,7 +40,7 @@
 	            <caption>Object type</caption>
 	            <description>Select the object type the image should be saved as (must be a specialisation of Image)</description>
             </property>
-            <property key="point" type="datasource" isList="true" required="true">
+            <property key="point" type="datasource" isList="true" required="false">
 	            <caption>Point object type</caption>
 	            <description>Select the object type each point should be saved as this object must have integer attributes named X and Y, and an association to the Image Object Type</description>
             </property>

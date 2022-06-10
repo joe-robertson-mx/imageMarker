@@ -9,6 +9,6 @@ package:
       [jar] Building jar: C:\Users\Joe.Robertson\Documents\Widgets\imageMarker\tests\testProject\deployment\model\bundles\project.jar
 
 BUILD SUCCESSFUL
-Total time: 3 seconds
+Total time: 2 seconds
 
 
