@@ -11,6 +11,7 @@ It can be used to indicate problems or identify locations on a standardised imag
 	• Allow for color coding of problem areas in the grid
 	• Use a static or dynamic image
 	• Specify the Mendix object the result should be saved as
+	
 ### Limitations:
 	• Currently there is no OnClick action when specifying a point
 	• A deafult Save button is provided, which commits the image as the entity specified in the configuration.
